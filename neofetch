@@ -1880,11 +1880,17 @@ get_de() {
         de+=" $de_ver"
     fi
 
-    # TODO:
-    #  - New config option + flag: --de_display_server on/off ?
-    #  - Add display of X11, Arcan and anything else relevant.
-    [[ $de && $WAYLAND_DISPLAY ]] &&
+    if [[ $de && $WAYLAND_DISPLAY ]]; then
         de+=" (Wayland)"
+    else
+        if [[ $de && "$XDG_SESSION_TYPE" = "x11" ]]; then
+            if [[ $(xdpyinfo | grep 'vendor string') == *"XLibre"* ]]; then
+                de+=" (XLibre)"
+            else
+                de+=" (Xorg)"
+            fi
+        fi
+    fi
 
     de_run=1
 }
